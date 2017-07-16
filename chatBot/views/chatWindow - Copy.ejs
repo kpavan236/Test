@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>chat window</title>
+<style>
+*{
+	margin:0;
+	padding:0;
+	font-family:tahoma, sans-serif;
+	box-sizing:border-box;
+}
+
+body{
+	background:#1ddced;
+}
+
+.button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.chatbox{
+	width:500px;
+	min-width:390px;
+	height:600px;
+	background:#fff;
+	padding:25px;
+	margin:20px auto;
+	box-shadow: 0 3px #ccc;
+}
+
+.chatlogs{
+	padding:10px;
+	width:100%;
+	height:450px;
+	background:#eee;
+	overflow-x:hidden;
+	overflow-y:scroll;
+}
+.chatlogs::-webkit-scrollbar{
+	width:10px;
+	overflow:scroll;
+}	
+
+.chatlogs::-webkit-scrollbar{
+	border-radius:5px;
+	background:rgba(0,0,0,.3);
+	
+	overflow:scroll;
+}
+.chat{
+	
+	display:flex;
+	flex-flow:row wrap;
+	align-items:flex-start;
+	margin-bottom:10px;
+}
+.chat .user-photo{
+	width:60px;
+	height:60px;
+	background:#ccc;
+	border-radius:50%;
+}
+
+.chat .chat-message{
+	width:80%;
+	padding:15px;
+	margin: 5px 10px 0;
+	border-radius:10px;
+	color:#fff;
+	font-size:20px;
+}
+.friend .chat-message{
+	background:#1adda4;
+}
+
+.self .chat-message{
+	background:#1ddced;
+	order: -1;
+}
+.chat-form{
+	margin-top:20px;
+	display:flex;
+	align-items:flex-start;
+}
+.chat-form textarea{
+	background: #fbfbfb;
+	width:75%;
+	height:50%;
+	border:2px solid #eee;
+	border-radius:3px;
+	resize:none;
+	padding:10px;
+	font-size:18px;
+	color:#333;
+}
+.chat-form textarea:focus{
+	background:#fff;
+}
+
+chat-form textarea::-webkit-scrollbar{
+	width:10px;
+}	
+
+chat-form textarea::-webkit-scrollbar{
+	border-radius:5px;
+	background:rgba(0,0,0,.1);
+}
+
+.chat-form button{
+	background:#1ddced;
+	padding:5px 15px;
+	font-size:30px;
+	color:#fff;
+	border:none;
+	margin:0 10px;
+	border-radius:3px;
+	box-shadow: 0 3px 0 #0ceb2c1;
+	cursor:pointer;
+	
+	-webkit-transition: background .2s ease;
+	-moz-transition: background .2s ease;
+	-o-transition: background .2s ease;
+}
+.chat-form button:hover{
+	background:#13c8d9;
+}
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var accessToken = "558d75c744e9483fb3f93e97660072f0",
+      baseUrl = "https://api.api.ai/v1/",
+      $speechInput,
+      $recBtn,
+      recognition,
+      messageRecording = "Recording...",
+      messageCouldntHear = "I couldn't hear you, could you say that again?",
+      messageInternalError = "Oh no, there has been an internal server error",
+      messageSorry = "I'm sorry, I don't have the answer to that yet.";
+ 
+ 
+    
+	function handle(option){
+			postMeg(option);
+		
+	}
+    function switchRecognition() {
+      if (recognition) {
+        stopRecognition();
+      } else {
+        startRecognition();
+      }
+    }
+ 
+    function setInput(text) {
+      $speechInput.val(text);
+      send();
+    }
+ 
+    function updateRec() {
+      $recBtn.text(recognition ? "Stop" : "Speak");
+    }
+ 
+    function send(message) {
+      var text = message;
+      $.ajax({
+        type: "POST",
+        url: baseUrl + "query",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: {
+          "Authorization": "Bearer " + accessToken
+        },
+        data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
+ 
+        success: function(data) {
+          prepareResponse(data);
+        },
+        error: function() {
+          respond(messageInternalError);
+        }
+      });
+    }
+ 
+    function prepareResponse(val) {
+      
+	  
+	  var debugJSON = JSON.stringify(val, undefined, 2);
+	   
+	   
+	   console.log(val.result.action);
+		console.log(val.result.resolvedQuery);
+		console.log(val.result.speech);
+		var text = {"action":val.result.action,"resolvedQuery":val.result.resolvedQuery,"speech":val.result.speech};
+		 var header = {};
+		 header = {
+          "Authorization": "Bearer " + accessToken,
+		  "action":val.result.action,
+		  "resolvedQuery":val.result.resolvedQuery,
+		  "speech":val.result.speech
+        };
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:8080/api/procMsg/",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        headers: header,
+        data: JSON.stringify({query: "", lang: "en", sessionId: "yaydevdiner"}),
+ 
+        success: function(data) {
+          respond(data);
+        },
+        error: function() {
+          respond(messageInternalError);
+        }
+      });
+	  
+	  /*
+	  var debugJSON = JSON.stringify(val, undefined, 2);
+	  
+		console.log(val.result.action);
+		console.log(val.result.resolvedQuery);
+		console.log(val.result.speech);
+		
+		if(val.result.action == 'Others'){
+			spokenResponse = val.result.speech;
+			respond(spokenResponse);
+		} else {
+			spokenResponse = val.result.speech;
+			respond(spokenResponse);
+		} 
+		
+		*/
+		
+		
+      }
+ 
+    function debugRespond(val) {
+      $("#response").text(val);
+    }
+ 
+    function respond(val) {
+		
+		var chatlogs = document.getElementById('chatlogs');
+		var d = new Date();
+		var bot_message_id = d.getTime();
+		var div1 = document.createElement("div");
+        div1.setAttribute("class","chat friend");
+		div1.setAttribute("id",bot_message_id);
+        chatlogs.appendChild(div1);
+		
+		var selfMsg = document.getElementById(bot_message_id);
+		
+		var div2 = document.createElement("div");
+        div2.setAttribute("class","user-photo");
+        div2.setAttribute("id","user_photo");
+        selfMsg.appendChild(div2);
+
+		var selfMessage = document.createElement("p");
+        selfMessage.setAttribute("class","chat-message");
+		selfMessage.innerHTML = val.res;
+		
+		selfMsg.appendChild(selfMessage);
+	}
+	
+	function postMeg(message){
+	
+		var chatlogs = document.getElementById('chatlogs');
+		var d = new Date();
+		var self_message_id = d.getTime();
+		var div1 = document.createElement("div");
+        div1.setAttribute("class","chat self");
+		div1.setAttribute("id",self_message_id);
+        chatlogs.appendChild(div1);
+		
+		var selfMsg = document.getElementById(self_message_id);
+		
+		var div2 = document.createElement("div");
+        div2.setAttribute("class","user-photo");
+        div2.setAttribute("id","user_photo");
+        selfMsg.appendChild(div2);
+
+		var reqMsg= message;
+		var selfMessage = document.createElement("p");
+        selfMessage.setAttribute("class","chat-message");
+		selfMessage.innerHTML = reqMsg;
+		
+		selfMsg.appendChild(selfMessage);
+		
+		send(reqMsg);	
+		
+	}
+	
+	function postMessage(){
+	
+	var msg = document.getElementById("textMessage").value;
+	if(msg.trim() != ''){
+	
+		var chatlogs = document.getElementById('chatlogs');
+		var d = new Date();
+		var self_message_id = d.getTime();
+		var div1 = document.createElement("div");
+        div1.setAttribute("class","chat self");
+		div1.setAttribute("id",self_message_id);
+        chatlogs.appendChild(div1);
+		
+		var selfMsg = document.getElementById(self_message_id);
+		
+		var div2 = document.createElement("div");
+        div2.setAttribute("class","user-photo");
+        div2.setAttribute("id","user_photo");
+        selfMsg.appendChild(div2);
+
+		var reqMsg= document.getElementById('textMessage').value;
+		var selfMessage = document.createElement("p");
+        selfMessage.setAttribute("class","chat-message");
+		selfMessage.innerHTML = reqMsg;
+		
+		selfMsg.appendChild(selfMessage);
+		
+		document.getElementById('textMessage').value = '';
+		send(reqMsg);	
+		}
+	}
+  </script>
+  
+</head>
+
+<body>
+	<div class="chatbox">
+		<div class="chatlogs" id="chatlogs">
+			<div class="chat friend">
+				<div class="user-photo"></div>
+				<p class="chat-message" id="bot_message">Hello! How can I assist you?</p>
+			</div>
+			
+		</div>	
+		
+		
+		<div class="chat-form">
+			<textarea id="textMessage"></textarea>
+			<button onclick="postMessage()">Send</button>
+		</div>
+		
+	</div>
+</body>
+</html>
