@@ -1,0 +1,9 @@
+Public : 54.89.237.112
+Private : 10.139.138.70 - Instance 1
+
+54.160.62.83
+
+sudo scp -r -i RHEL-BOT.PEM  jarvispa-xmpp/ root@54.160.62.83:/home/
+
+
+sudo scp -r -i RHEL-BOT.PEM  node/ root@54.160.62.83:/home/

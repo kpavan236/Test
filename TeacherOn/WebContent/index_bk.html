@@ -1,0 +1,109 @@
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		<script src="js/jquery.min.js"></script>		
+		<script src="js/bootstrap.min.js"></script>		
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<script src="js/socket.io.js"></script>
+		<link rel="stylesheet" href="css/Demo.css">
+		<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>	
+		<script src="https://rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
+		<script src="js/guid.js"></script>
+		<script src="config/config.js"></script>
+		<script src="js/Demo.js"></script>
+		<script src="js/text-channel.js"></script>
+		<link rel="stylesheet" href="css/w3.css">
+		<link rel="stylesheet" href="css/jarvis-voice-style.css">
+		<link rel="stylesheet" type="text/css" href="css/custom.css">
+		<script>
+				var username=null;
+				var gender = null;
+				var objectId = null;
+				
+		
+		 var a=1;
+		   function chatWindowMaximize(){  
+				roomidfunction(objectId);
+		        pageLoad = pageLoad + 1;
+			    if(a==1)
+					{
+						var welcomeMessage = 'Welcome!! How can I help you today?';		                
+						
+			            var welcomeString = $('#chat span').html();
+			            
+						if(1 == pageLoad){
+							
+							if(welcomeString !== undefined && welcomeString.indexOf(welcomeMessage)===-1){
+				                    displayIncomingMessage(welcomeMessage);
+				            }else if(welcomeString === undefined){
+				                    displayIncomingMessage(welcomeMessage);
+				            }
+							
+							}
+							$("#start").css({ "width": "350px","margin-left": "972px","height":"47px","background-color": "#434347","margin-bottom": "389px"});
+							$("#start").html("<table id='chatBoxHeader' border='0'><tr width = '350px' height = '40px'><td><div id='header' style='margin-top:-210px;'><img src='images/teacheron.png' height='35px' width='30px' margin-top='9px'></td></div><td style='vertical-align: top'><div id='changeText'><div id='chat_heading'><font color='white' face='arial' size='4px'>Teacheron</font><font color='white' size='2px'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span id='chatWindowMaximize' style='font-size: 25px'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</b></font></div></td></div></tr></table>");					$("#start").html("<table id='chatBoxHeader' border='0'><tr width = '350px' height = '45px'><td><div id='header' style='margin-top:-210px'><img src='images/teacheron.png' height='35px' width='30px' margin-top= '9px'></td></div><td style='vertical-align: top'><div id='changeText'><div id='chat_heading'><font color='white' face='arial'size='3px'>Teacheron</font><font color='white' size='2px'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b><span id='chatWindowMaximize' style='font-size: 25px; line-height:1em'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</b></font></div></td></div></tr></table>"); 
+					 		  
+							$("html, body").animate({ scrollTop: $(document).height() }, 1200); 
+							$("#start").css("margin-bottom","389px");
+							$("#chatBox").show();
+							$("#chatBoxextend").show();
+							$("#chatbot-img").hide();
+							$("#chatBoxHeader").show();
+							a--;
+				        }
+				        else if(a==0)
+				        {
+							$("#start").css({"width":"0px", "margin-bottom": "21px", "margin-left" : "1250px"});
+							$("#chatbot-img").show();
+							$("#chatBox").hide();
+							$("#chatBoxextend").hide();
+							$("#chatBoxHeader").hide();
+							a++;
+				        }	        
+		
+				      }	
+		  
+		</script>
+		
+	</head>
+	
+<body class="sapUiBody" onload='chatWindowMaximize()' role="application">
+	<div id='two'>
+   <div id='start' onclick='chatWindowMaximize()' style='height:0px;'>
+
+   
+   </div>
+   <div id='chatBox'>
+   <div id='chat'></div>
+   </div>
+  <div id='chatBoxextend'>
+   <div>
+		<div id="inputTextArea" style='font-size: large;width:300px;'>
+		<table><tr><td>
+			<input type='text' style='font-size: large;width:280px;' placeholder="Say Something ..." onkeypress='check(event)' id='demo'></td>
+			<td><img src='images/play-5-24.png' id='button1' onclick='send_message()'></img></td></tr></table>
+		</div>
+   </div>
+   </div>
+ </div>
+		
+		
+		<div id="content"></div>
+		 <div class="start" id="start">
+		<img class="chatbot-img" id="chatbot-img" src="images/chat.png" onclick='chatWindowMaximize()' >
+		 <div id='chatBox'>
+			<div id='chat'></div>
+		</div>
+		<div id='chatBoxextend'>
+			<div style='width:300px;'>
+				<div id="inputTextArea">
+					<input type='text' style='font-size: small;' placeholder="Say Something ..." onkeypress='check(event)' id='demo'>
+					<img src='images/play-5-24.png' id='button1'></img>
+				</div>
+			</div>
+		</div> 
+	</div> 
+	</body>
+</html>
